@@ -50,6 +50,21 @@ class ServiceProvider:
         """
         self.set_auth_data_in_session(auth_data)
         return redirect(relay_state)
+    
+    def login_invalid_signature(self, relay_state: str) -> Response:
+        """ Called when the ACS receives a response that is not correctly signed.
+        """
+        return "invalid signature in IDP response"
+        
+    def login_invalid_assertion(self, relay_state: str) -> Response:
+        """ Called when one or more assertions in the response are invalid.
+        """
+        return "invalid assertion in IDP response"
+    
+    def login_unauthorized(self, auth_data: AuthData, relay_state: str) -> Response:
+        """ Called when the IDP rejects the user that is currently authenticated.
+        """
+        return "user is unauthorized"
 
     # Service provider configuration
 
