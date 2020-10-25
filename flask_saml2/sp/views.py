@@ -4,6 +4,7 @@ from flask import Response, make_response, redirect, request, url_for
 from flask.views import MethodView, View
 
 from flask_saml2.exceptions import CannotHandleAssertion, UserNotAuthorized
+from signxml.exceptions import InvalidSignature
 
 from . import sp
 
@@ -87,9 +88,12 @@ class AssertionConsumer(SAML2View):
                 auth_data = handler.get_auth_data(response)
                 return self.sp.login_successful(auth_data, relay_state)
             except CannotHandleAssertion:
-                continue
+                return self.sp.login_invalid_assertion(relay_state)
+            except InvalidSignature:
+                return self.sp.login_invalid_signature(relay_state)
             except UserNotAuthorized:
-                return self.sp.render_template('flask_saml2_sp/user_not_authorized.html')
+                auth_data = handler.get_auth_data(response)
+                return self.sp.login_unauthorized(auth_data, relay_state)
 
 
 class Metadata(SAML2View):
