@@ -70,11 +70,11 @@ class SingleLogout(SAML2View):
     def get(self):
         # TODO Verify this SLO request is valid, process it correctly, send the
         # user back to the IdP for further sign outs...
-        return self.do_logout()
+        return self.do_logout(None)
 
     def do_logout(self, handler):
         self.sp.logout()
-        ...  # TODO
+        return redirect("/")
 
 
 class AssertionConsumer(SAML2View):
